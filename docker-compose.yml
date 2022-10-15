@@ -1,0 +1,23 @@
+version: '3.5'
+
+services:
+  postgres:
+    container_name: lets_game_postgres
+    image: postgres
+    hostname: postgres
+    env_file: .env    
+    volumes:
+       - postgres:/data/postgres
+    ports:
+      - "6666:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+    postgres:
+      driver: local
