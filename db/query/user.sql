@@ -4,13 +4,15 @@ WHERE id = $1 LIMIT 1;
 
 -- name: ListUsers :many
 SELECT * FROM lg_users
-ORDER BY id;
+ORDER BY id
+LIMIT $1
+OFFSET $2;
 
 -- name: CreateUser :one
 INSERT INTO lg_users (
-  id, name, email, password, avatar, is_active, created_at, groups
+  id, name, email, password, avatar, is_active, groups
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8
+  $1, $2, $3, $4, $5, $6, $7
 )
 RETURNING *;
 

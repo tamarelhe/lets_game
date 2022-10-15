@@ -6,7 +6,7 @@ CREATE TABLE public.lg_users (
 	"password" varchar NOT NULL,
 	avatar varchar NULL,
 	is_active bool NOT NULL,
-	created_at timetz NOT NULL,
+	created_at timetz NOT NULL DEFAULT (now()),
 	"groups" text[] NULL,
 	CONSTRAINT user_pk PRIMARY KEY (id)
 );
@@ -20,7 +20,7 @@ CREATE TABLE public.lg_groups (
 	"name" varchar NOT NULL,
 	avatar varchar NULL,
 	members jsonb NOT NULL,
-	created_at timestamptz NOT NULL,
+	created_at timestamptz NOT NULL DEFAULT (now()),
 	CONSTRAINT group_pk PRIMARY KEY (id)
 );
 CREATE INDEX group_id_idx ON public.lg_groups USING btree (id);
@@ -36,7 +36,7 @@ CREATE TABLE public.lg_games (
 	"location" jsonb NULL,
 	constrains jsonb NULL,
 	message text NULL,
-	created_at timetz NOT NULL,
+	created_at timetz NOT NULL DEFAULT (now()),
 	CONSTRAINT game_pk PRIMARY KEY (id)
 );
 CREATE INDEX game_datetime_idx ON public.lg_games USING btree (datetime);

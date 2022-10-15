@@ -26,22 +26,21 @@ func (q *Queries) ActivateUser(ctx context.Context, id uuid.UUID) error {
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO lg_users (
-  id, name, email, password, avatar, is_active, created_at, groups
+  id, name, email, password, avatar, is_active, groups
 ) VALUES (
-  $1, $2, $3, $4, $5, $6, $7, $8
+  $1, $2, $3, $4, $5, $6, $7
 )
 RETURNING id, name, email, password, avatar, is_active, created_at, groups
 `
 
 type CreateUserParams struct {
-	ID        uuid.UUID
-	Name      string
-	Email     string
-	Password  string
-	Avatar    sql.NullString
-	IsActive  bool
-	CreatedAt interface{}
-	Groups    []string
+	ID       uuid.UUID
+	Name     string
+	Email    string
+	Password string
+	Avatar   sql.NullString
+	IsActive bool
+	Groups   []string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (LgUser, error) {
@@ -52,7 +51,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (LgUser,
 		arg.Password,
 		arg.Avatar,
 		arg.IsActive,
-		arg.CreatedAt,
 		pq.Array(arg.Groups),
 	)
 	var i LgUser
@@ -114,10 +112,17 @@ func (q *Queries) InactivateUser(ctx context.Context, id uuid.UUID) error {
 const listUsers = `-- name: ListUsers :many
 SELECT id, name, email, password, avatar, is_active, created_at, groups FROM lg_users
 ORDER BY id
+LIMIT $1
+OFFSET $2
 `
 
-func (q *Queries) ListUsers(ctx context.Context) ([]LgUser, error) {
-	rows, err := q.db.QueryContext(ctx, listUsers)
+type ListUsersParams struct {
+	Limit  int32
+	Offset int32
+}
+
+func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]LgUser, error) {
+	rows, err := q.db.QueryContext(ctx, listUsers, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
