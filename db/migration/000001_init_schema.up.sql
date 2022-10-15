@@ -1,5 +1,5 @@
 -- public.lg_user table
-CREATE TABLE public.lg_user (
+CREATE TABLE public.lg_users (
 	id uuid NOT NULL,
 	"name" varchar NOT NULL,
 	email varchar NOT NULL,
@@ -10,12 +10,12 @@ CREATE TABLE public.lg_user (
 	"groups" text[] NULL,
 	CONSTRAINT user_pk PRIMARY KEY (id)
 );
-CREATE INDEX user_id_idx ON public.lg_user USING btree (id);
-CREATE UNIQUE INDEX lg_user_email_idx ON public.lg_user (email);
+CREATE INDEX user_id_idx ON public.lg_users USING btree (id);
+CREATE UNIQUE INDEX lg_user_email_idx ON public.lg_users (email);
 
 
 -- public.lg_user lg_group
-CREATE TABLE public.lg_group (
+CREATE TABLE public.lg_groups (
 	id uuid NOT NULL,
 	"name" varchar NOT NULL,
 	avatar varchar NULL,
@@ -23,11 +23,11 @@ CREATE TABLE public.lg_group (
 	created_at timestamptz NOT NULL,
 	CONSTRAINT group_pk PRIMARY KEY (id)
 );
-CREATE INDEX group_id_idx ON public.lg_group USING btree (id);
+CREATE INDEX group_id_idx ON public.lg_groups USING btree (id);
 
 
 -- public.lg_user lg_game
-CREATE TABLE public.lg_game (
+CREATE TABLE public.lg_games (
 	id uuid NOT NULL,
 	group_id uuid NOT NULL,
 	type_id uuid NULL,
@@ -39,8 +39,8 @@ CREATE TABLE public.lg_game (
 	created_at timetz NOT NULL,
 	CONSTRAINT game_pk PRIMARY KEY (id)
 );
-CREATE INDEX game_datetime_idx ON public.lg_game USING btree (datetime);
-CREATE INDEX game_id_idx ON public.lg_game USING btree (id);
+CREATE INDEX game_datetime_idx ON public.lg_games USING btree (datetime);
+CREATE INDEX game_id_idx ON public.lg_games USING btree (id);
 
 
-ALTER TABLE public.lg_game ADD CONSTRAINT game_fk FOREIGN KEY (id) REFERENCES public.lg_group(id);
+ALTER TABLE public.lg_games ADD CONSTRAINT game_fk FOREIGN KEY (id) REFERENCES public.lg_groups(id);
