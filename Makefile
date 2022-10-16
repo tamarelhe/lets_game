@@ -8,10 +8,10 @@ dropdb:
 	docker exec -it postgres12 dropdb lets_game
 
 installmigrateubuntu:
-	curl -L https://packagecloud.io/golang-migrate/migrate/gpgkey | apt-key add -
-	echo "deb https://packagecloud.io/golang-migrate/migrate/ubuntu/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/migrate.list
-	apt-get update
-	apt-get install -y migrate
+	sudo curl -L https://packagecloud.io/golang-migrate/migrate/gpgkey | apt-key add -
+	sudo echo "deb https://packagecloud.io/golang-migrate/migrate/ubuntu/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/migrate.list
+	sudo apt-get update
+	sudo apt-get install -y migrate
 
 migrateup:
 	migrate -path db/migration -database "postgresql://lg:lg2022@localhost:5432/lets_game?sslmode=disable" -verbose up
