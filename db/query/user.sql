@@ -2,6 +2,10 @@
 SELECT * FROM lg_users
 WHERE id = $1 LIMIT 1;
 
+-- name: GetUserByEmail :one
+SELECT * FROM lg_users
+WHERE email = $1 LIMIT 1;
+
 -- name: ListUsers :many
 SELECT * FROM lg_users
 ORDER BY id

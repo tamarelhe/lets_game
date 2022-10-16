@@ -21,6 +21,7 @@ type Querier interface {
 	GetGame(ctx context.Context, id uuid.UUID) (LgGame, error)
 	GetGroup(ctx context.Context, id uuid.UUID) (LgGroup, error)
 	GetUser(ctx context.Context, id uuid.UUID) (LgUser, error)
+	GetUserByEmail(ctx context.Context, email string) (LgUser, error)
 	InactivateUser(ctx context.Context, id uuid.UUID) error
 	ListGames(ctx context.Context, arg ListGamesParams) ([]LgGame, error)
 	ListGroups(ctx context.Context, arg ListGroupsParams) ([]LgGroup, error)

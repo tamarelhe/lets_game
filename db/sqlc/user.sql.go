@@ -98,6 +98,27 @@ func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (LgUser, error) {
 	return i, err
 }
 
+const getUserByEmail = `-- name: GetUserByEmail :one
+SELECT id, name, email, password, avatar, is_active, created_at, groups FROM lg_users
+WHERE email = $1 LIMIT 1
+`
+
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (LgUser, error) {
+	row := q.db.QueryRowContext(ctx, getUserByEmail, email)
+	var i LgUser
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Email,
+		&i.Password,
+		&i.Avatar,
+		&i.IsActive,
+		&i.CreatedAt,
+		pq.Array(&i.Groups),
+	)
+	return i, err
+}
+
 const inactivateUser = `-- name: InactivateUser :exec
 UPDATE lg_users
   set is_active = false
