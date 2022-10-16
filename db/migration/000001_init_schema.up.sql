@@ -6,7 +6,7 @@ CREATE TABLE public.lg_users (
 	"password" varchar NOT NULL,
 	avatar varchar NULL,
 	is_active bool NOT NULL,
-	created_at timetz NOT NULL DEFAULT (now()),
+	created_at timestamptz NOT NULL DEFAULT (now()),
 	"groups" text[] NULL,
 	CONSTRAINT user_pk PRIMARY KEY (id)
 );
