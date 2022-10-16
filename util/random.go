@@ -33,3 +33,10 @@ func RandomString(n int) string {
 func RandomUUID() uuid.UUID {
 	return uuid.New()
 }
+
+func RandomNullUUID() uuid.NullUUID {
+	return uuid.NullUUID{
+		UUID:  uuid.New(),
+		Valid: true,
+	}
+}

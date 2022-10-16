@@ -34,7 +34,7 @@ CREATE TABLE public.lg_games (
 	datetime timestamptz NOT NULL,
 	members jsonb NULL,
 	"location" jsonb NULL,
-	constrains jsonb NULL,
+	constraints jsonb NULL,
 	message text NULL,
 	created_at timetz NOT NULL DEFAULT (now()),
 	CONSTRAINT game_pk PRIMARY KEY (id)
@@ -43,4 +43,4 @@ CREATE INDEX game_datetime_idx ON public.lg_games USING btree (datetime);
 CREATE INDEX game_id_idx ON public.lg_games USING btree (id);
 
 
-ALTER TABLE public.lg_games ADD CONSTRAINT game_fk FOREIGN KEY (id) REFERENCES public.lg_groups(id);
+ALTER TABLE public.lg_games ADD CONSTRAINT game_group_fk FOREIGN KEY (group_id) REFERENCES public.lg_groups(id);

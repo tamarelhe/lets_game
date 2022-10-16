@@ -7,16 +7,46 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/tamarelhe/lets_game/util"
 )
 
-func createRandomMembers(n int) []byte {
+func getGroupMembersJson(group LgGroup) []byte {
+	var members []map[string]interface{}
+	var membersList []uuid.UUID
+
+	err := json.Unmarshal(group.Members, &members)
+	if err != nil {
+		fmt.Printf("could not unmarshal json: %s\n", err)
+		return nil
+	}
+	for i := 0; i < len(members); i++ {
+		member, err := uuid.Parse(fmt.Sprint(members[i]["id"]))
+		if err != nil {
+			fmt.Printf("could not convert uuid string into uuid: %s\n", err)
+			return nil
+		}
+		membersList = append(membersList, member)
+	}
+
+	membersJson, err := json.Marshal(membersList)
+	if err != nil {
+		fmt.Printf("could not marshal json: %s\n", err)
+		return nil
+	}
+
+	return membersJson
+}
+
+func createRandomGroupMembers(t *testing.T, n int) []byte {
 	var membersJson []map[string]interface{}
 
 	for i := 0; i < n; i++ {
+		user := createRandomUser(t, true)
+
 		member := map[string]interface{}{
-			"id":   util.RandomUUID(),
+			"id":   user.ID,
 			"role": util.RandomInt(1, 3),
 		}
 		membersJson = append(membersJson, member)
@@ -32,7 +62,7 @@ func createRandomMembers(n int) []byte {
 }
 
 func createRandomGroup(t *testing.T) LgGroup {
-	membersJson := createRandomMembers(2)
+	membersJson := createRandomGroupMembers(t, 2)
 
 	arg := CreateGroupParams{
 		ID:      util.RandomUUID(),
@@ -77,7 +107,7 @@ func TestGetGroup(t *testing.T) {
 func TestUpdateGroup(t *testing.T) {
 	group1 := createRandomGroup(t)
 
-	newMembersJson := createRandomMembers(3)
+	newMembersJson := createRandomGroupMembers(t, 3)
 
 	arg := UpdateGroupParams{
 		ID:      group1.ID,

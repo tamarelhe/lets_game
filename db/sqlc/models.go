@@ -14,15 +14,15 @@ import (
 )
 
 type LgGame struct {
-	ID         uuid.UUID
-	GroupID    uuid.UUID
-	TypeID     uuid.NullUUID
-	Datetime   time.Time
-	Members    pqtype.NullRawMessage
-	Location   pqtype.NullRawMessage
-	Constrains pqtype.NullRawMessage
-	Message    sql.NullString
-	CreatedAt  interface{}
+	ID          uuid.UUID
+	GroupID     uuid.UUID
+	TypeID      uuid.NullUUID
+	Datetime    time.Time
+	Members     pqtype.NullRawMessage
+	Location    pqtype.NullRawMessage
+	Constraints pqtype.NullRawMessage
+	Message     sql.NullString
+	CreatedAt   interface{}
 }
 
 type LgGroup struct {
