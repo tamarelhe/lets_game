@@ -34,13 +34,13 @@ RETURNING id, name, email, password, avatar, is_active, created_at, groups
 `
 
 type CreateUserParams struct {
-	ID       uuid.UUID
-	Name     string
-	Email    string
-	Password string
-	Avatar   sql.NullString
-	IsActive bool
-	Groups   []string
+	ID       uuid.UUID      `json:"id"`
+	Name     string         `json:"name"`
+	Email    string         `json:"email"`
+	Password string         `json:"password"`
+	Avatar   sql.NullString `json:"avatar"`
+	IsActive bool           `json:"is_active"`
+	Groups   []string       `json:"groups"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (LgUser, error) {
@@ -117,8 +117,8 @@ OFFSET $2
 `
 
 type ListUsersParams struct {
-	Limit  int32
-	Offset int32
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
 }
 
 func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]LgUser, error) {
@@ -127,7 +127,7 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]LgUser,
 		return nil, err
 	}
 	defer rows.Close()
-	var items []LgUser
+	items := []LgUser{}
 	for rows.Next() {
 		var i LgUser
 		if err := rows.Scan(
@@ -164,11 +164,11 @@ RETURNING id, name, email, password, avatar, is_active, created_at, groups
 `
 
 type UpdateUserParams struct {
-	ID     uuid.UUID
-	Name   string
-	Email  string
-	Avatar sql.NullString
-	Groups []string
+	ID     uuid.UUID      `json:"id"`
+	Name   string         `json:"name"`
+	Email  string         `json:"email"`
+	Avatar sql.NullString `json:"avatar"`
+	Groups []string       `json:"groups"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (LgUser, error) {
@@ -200,8 +200,8 @@ WHERE id = $1
 `
 
 type UpdateUserPasswordParams struct {
-	ID       uuid.UUID
-	Password string
+	ID       uuid.UUID `json:"id"`
+	Password string    `json:"password"`
 }
 
 func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error {

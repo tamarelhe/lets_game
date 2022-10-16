@@ -24,14 +24,14 @@ RETURNING id, group_id, type_id, datetime, members, location, constraints, messa
 `
 
 type CreateGameParams struct {
-	ID          uuid.UUID
-	GroupID     uuid.UUID
-	TypeID      uuid.NullUUID
-	Datetime    time.Time
-	Members     pqtype.NullRawMessage
-	Location    pqtype.NullRawMessage
-	Constraints pqtype.NullRawMessage
-	Message     sql.NullString
+	ID          uuid.UUID             `json:"id"`
+	GroupID     uuid.UUID             `json:"group_id"`
+	TypeID      uuid.NullUUID         `json:"type_id"`
+	Datetime    time.Time             `json:"datetime"`
+	Members     pqtype.NullRawMessage `json:"members"`
+	Location    pqtype.NullRawMessage `json:"location"`
+	Constraints pqtype.NullRawMessage `json:"constraints"`
+	Message     sql.NullString        `json:"message"`
 }
 
 func (q *Queries) CreateGame(ctx context.Context, arg CreateGameParams) (LgGame, error) {
@@ -100,8 +100,8 @@ OFFSET $2
 `
 
 type ListGamesParams struct {
-	Limit  int32
-	Offset int32
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
 }
 
 func (q *Queries) ListGames(ctx context.Context, arg ListGamesParams) ([]LgGame, error) {
@@ -110,7 +110,7 @@ func (q *Queries) ListGames(ctx context.Context, arg ListGamesParams) ([]LgGame,
 		return nil, err
 	}
 	defer rows.Close()
-	var items []LgGame
+	items := []LgGame{}
 	for rows.Next() {
 		var i LgGame
 		if err := rows.Scan(
@@ -151,14 +151,14 @@ RETURNING id, group_id, type_id, datetime, members, location, constraints, messa
 `
 
 type UpdateGameParams struct {
-	ID          uuid.UUID
-	GroupID     uuid.UUID
-	TypeID      uuid.NullUUID
-	Datetime    time.Time
-	Members     pqtype.NullRawMessage
-	Location    pqtype.NullRawMessage
-	Constraints pqtype.NullRawMessage
-	Message     sql.NullString
+	ID          uuid.UUID             `json:"id"`
+	GroupID     uuid.UUID             `json:"group_id"`
+	TypeID      uuid.NullUUID         `json:"type_id"`
+	Datetime    time.Time             `json:"datetime"`
+	Members     pqtype.NullRawMessage `json:"members"`
+	Location    pqtype.NullRawMessage `json:"location"`
+	Constraints pqtype.NullRawMessage `json:"constraints"`
+	Message     sql.NullString        `json:"message"`
 }
 
 func (q *Queries) UpdateGame(ctx context.Context, arg UpdateGameParams) (LgGame, error) {

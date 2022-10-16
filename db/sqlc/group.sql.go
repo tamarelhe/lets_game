@@ -23,10 +23,10 @@ RETURNING id, name, avatar, members, created_at
 `
 
 type CreateGroupParams struct {
-	ID      uuid.UUID
-	Name    string
-	Avatar  sql.NullString
-	Members json.RawMessage
+	ID      uuid.UUID       `json:"id"`
+	Name    string          `json:"name"`
+	Avatar  sql.NullString  `json:"avatar"`
+	Members json.RawMessage `json:"members"`
 }
 
 func (q *Queries) CreateGroup(ctx context.Context, arg CreateGroupParams) (LgGroup, error) {
@@ -83,8 +83,8 @@ OFFSET $2
 `
 
 type ListGroupsParams struct {
-	Limit  int32
-	Offset int32
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
 }
 
 func (q *Queries) ListGroups(ctx context.Context, arg ListGroupsParams) ([]LgGroup, error) {
@@ -93,7 +93,7 @@ func (q *Queries) ListGroups(ctx context.Context, arg ListGroupsParams) ([]LgGro
 		return nil, err
 	}
 	defer rows.Close()
-	var items []LgGroup
+	items := []LgGroup{}
 	for rows.Next() {
 		var i LgGroup
 		if err := rows.Scan(
@@ -126,10 +126,10 @@ RETURNING id, name, avatar, members, created_at
 `
 
 type UpdateGroupParams struct {
-	ID      uuid.UUID
-	Name    string
-	Avatar  sql.NullString
-	Members json.RawMessage
+	ID      uuid.UUID       `json:"id"`
+	Name    string          `json:"name"`
+	Avatar  sql.NullString  `json:"avatar"`
+	Members json.RawMessage `json:"members"`
 }
 
 func (q *Queries) UpdateGroup(ctx context.Context, arg UpdateGroupParams) (LgGroup, error) {
