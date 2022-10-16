@@ -3,21 +3,20 @@ version: '3.5'
 services:
   postgres:
     container_name: lets_game_postgres
-    image: postgres
-    hostname: postgres
-    env_file: .env    
-    volumes:
-       - postgres:/data/postgres
+    image: postgres:12-alpine
+    environment:
+      - POSTGRES_USER=lg
+      - POSTGRES_PASSWORD=lg2022
+      - POSTGRES_DB=lets_game
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "6666:5432"
-    networks:
+      - "8080:8080"
+    environment:
+      - DB_SOURCE=postgresql://lg:lg2022@postgres:5432/lets_game?sslmode=disable
+    depends_on:
       - postgres
-    restart: unless-stopped
-
-networks:
-  postgres:
-    driver: bridge
-
-volumes:
-    postgres:
-      driver: local
+    entrypoint: [ "/app/wait-for.sh", "postgres:5432", "--", "/app/start.sh" ]
+    command: [ "/app/main" ]
