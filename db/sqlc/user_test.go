@@ -10,11 +10,14 @@ import (
 )
 
 func createRandomUser(t *testing.T, isActive bool) LgUser {
+	hashedPassword, err := util.HashPassword(util.RandomString(6))
+	require.NoError(t, err)
+
 	arg := CreateUserParams{
 		ID:       util.RandomUUID(),
 		Name:     util.RandomString(30),
-		Email:    util.RandomString(20),
-		Password: util.RandomString(10),
+		Email:    util.RandomEmail(),
+		Password: hashedPassword,
 		Avatar:   sql.NullString{},
 		IsActive: isActive,
 		Groups:   nil,
@@ -64,7 +67,7 @@ func TestUpdateUser(t *testing.T) {
 	arg := UpdateUserParams{
 		ID:     user1.ID,
 		Name:   util.RandomString(30),
-		Email:  util.RandomString(20),
+		Email:  util.RandomEmail(),
 		Avatar: sql.NullString{},
 		Groups: nil,
 	}

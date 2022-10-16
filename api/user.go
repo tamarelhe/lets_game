@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	db "github.com/tamarelhe/lets_game/db/sqlc"
 	"github.com/tamarelhe/lets_game/util"
 )
@@ -13,9 +14,19 @@ import (
 // create user request type
 type createUserRequest struct {
 	Name     string         `json:"name" binding:"required"`
-	Email    string         `json:"email" binding:"required"`
-	Password string         `json:"password" binding:"required"`
+	Email    string         `json:"email" binding:"required,email"`
+	Password string         `json:"password" binding:"required,min=8"`
 	Avatar   sql.NullString `json:"avatar"`
+}
+
+// create user request type
+type userResponse struct {
+	ID       uuid.UUID      `json:"id"`
+	Name     string         `json:"name"`
+	Email    string         `json:"email"`
+	Avatar   sql.NullString `json:"avatar"`
+	IsActive bool           `json:"is_active"`
+	Groups   []string       `json:"groups"`
 }
 
 // create user method
@@ -26,11 +37,17 @@ func (server *Server) createUser(ctx *gin.Context) {
 		return
 	}
 
+	hashedPassword, err := util.HashPassword(req.Password)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
 	arg := db.CreateUserParams{
 		ID:       util.RandomUUID(),
 		Name:     req.Name,
 		Email:    req.Email,
-		Password: req.Password,
+		Password: hashedPassword,
 		Avatar:   req.Avatar,
 		IsActive: true,
 		Groups:   nil,
@@ -38,11 +55,28 @@ func (server *Server) createUser(ctx *gin.Context) {
 
 	user, err := server.store.CreateUser(ctx, arg)
 	if err != nil {
+		if pqErr, ok := err.(*pq.Error); ok {
+			switch pqErr.Code.Name() {
+			case "unique_violation":
+				ctx.JSON(http.StatusForbidden, errorResponse(err))
+				return
+			}
+		}
+
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	ctx.JSON(http.StatusOK, user)
+	resp := userResponse{
+		ID:       user.ID,
+		Name:     user.Name,
+		Email:    user.Email,
+		Avatar:   user.Avatar,
+		IsActive: user.IsActive,
+		Groups:   user.Groups,
+	}
+
+	ctx.JSON(http.StatusOK, resp)
 }
 
 // get user request type
@@ -75,7 +109,16 @@ func (server *Server) getUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, user)
+	resp := userResponse{
+		ID:       user.ID,
+		Name:     user.Name,
+		Email:    user.Email,
+		Avatar:   user.Avatar,
+		IsActive: user.IsActive,
+		Groups:   user.Groups,
+	}
+
+	ctx.JSON(http.StatusOK, resp)
 }
 
 // get users list request type
@@ -108,7 +151,21 @@ func (server *Server) getUsersList(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, users)
+	var respList []userResponse
+	for _, user := range users {
+		resp := userResponse{
+			ID:       user.ID,
+			Name:     user.Name,
+			Email:    user.Email,
+			Avatar:   user.Avatar,
+			IsActive: user.IsActive,
+			Groups:   user.Groups,
+		}
+
+		respList = append(respList, resp)
+	}
+
+	ctx.JSON(http.StatusOK, respList)
 }
 
 // delete user request type
