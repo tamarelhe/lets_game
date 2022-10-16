@@ -40,6 +40,6 @@ type LgUser struct {
 	Password  string
 	Avatar    sql.NullString
 	IsActive  bool
-	CreatedAt interface{}
+	CreatedAt time.Time
 	Groups    []string
 }
