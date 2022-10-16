@@ -83,6 +83,23 @@ func TestUpdateUser(t *testing.T) {
 	require.Equal(t, user1.Groups, user2.Groups)
 }
 
+func TestUpdateUserPassword(t *testing.T) {
+	user1 := createRandomUser(t, true)
+
+	arg := UpdateUserPasswordParams{
+		ID:       user1.ID,
+		Password: util.RandomString(10),
+	}
+
+	err := testQueries.UpdateUserPassword(context.Background(), arg)
+	require.NoError(t, err)
+	user2, err := testQueries.GetUser(context.Background(), user1.ID)
+	require.NoError(t, err)
+
+	require.NotEqual(t, user1.Password, user2.Password)
+	require.Equal(t, arg.Password, user2.Password)
+}
+
 func TestDeleteUser(t *testing.T) {
 	user1 := createRandomUser(t, true)
 	err := testQueries.DeleteUser(context.Background(), user1.ID)
