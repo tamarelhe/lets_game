@@ -8,6 +8,10 @@ services:
       - POSTGRES_USER=lg
       - POSTGRES_PASSWORD=lg2022
       - POSTGRES_DB=lets_game
+    networks:
+      - backend
+    ports:
+      - "5432:5432"
   api:
     build:
       context: .
@@ -18,5 +22,18 @@ services:
       - DB_SOURCE=postgresql://lg:lg2022@postgres:5432/lets_game?sslmode=disable
     depends_on:
       - postgres
-    entrypoint: [ "/app/wait-for.sh", "postgres:5432", "--", "/app/start.sh" ]
+    entrypoint: [ 
+      "/app/wait-for.sh", 
+      "postgres:5432", 
+      "--", 
+      "/app/start.sh" 
+    ]
     command: [ "/app/main" ]
+    networks:
+      - backend
+
+networks:
+  backend:
+    name: lets-game-network
+    external: true
+    

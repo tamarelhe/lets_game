@@ -1,0 +1,1 @@
+DROP TABLE public.lg_sessions;

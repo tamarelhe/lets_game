@@ -14,12 +14,14 @@ type Querier interface {
 	ActivateUser(ctx context.Context, id uuid.UUID) error
 	CreateGame(ctx context.Context, arg CreateGameParams) (LgGame, error)
 	CreateGroup(ctx context.Context, arg CreateGroupParams) (LgGroup, error)
+	CreateSession(ctx context.Context, arg CreateSessionParams) (LgSession, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (LgUser, error)
 	DeleteGame(ctx context.Context, id uuid.UUID) error
 	DeleteGroup(ctx context.Context, id uuid.UUID) error
 	DeleteUser(ctx context.Context, id uuid.UUID) error
 	GetGame(ctx context.Context, id uuid.UUID) (LgGame, error)
 	GetGroup(ctx context.Context, id uuid.UUID) (LgGroup, error)
+	GetSession(ctx context.Context, id uuid.UUID) (LgSession, error)
 	GetUser(ctx context.Context, id uuid.UUID) (LgUser, error)
 	GetUserByEmail(ctx context.Context, email string) (LgUser, error)
 	InactivateUser(ctx context.Context, id uuid.UUID) error
