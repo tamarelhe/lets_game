@@ -2,11 +2,13 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+	"github.com/tamarelhe/lets_game/api/token"
 	db "github.com/tamarelhe/lets_game/db/sqlc"
 	"github.com/tamarelhe/lets_game/util"
 )
@@ -110,6 +112,14 @@ func (server *Server) getUser(ctx *gin.Context) {
 		}
 
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	// validate if the user match the authenticated user
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if user.Email != authPayload.Email {
+		err := errors.New("user does not belong to the authenticated user")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
 
