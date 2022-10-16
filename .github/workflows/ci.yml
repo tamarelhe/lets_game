@@ -19,6 +19,8 @@ jobs:
           POSTGRES_USER: lg
           POSTGRES_PASSWORD: lg2022
           POSTGRES_DB: lets_game
+        ports:
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
